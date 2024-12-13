@@ -1,0 +1,14 @@
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\bin\Debug\net8.0\TodoApp.Domain.deps.json
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\bin\Debug\net8.0\TodoApp.Domain.runtimeconfig.json
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\bin\Debug\net8.0\TodoApp.Domain.dll
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\bin\Debug\net8.0\TodoApp.Domain.pdb
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.csproj.AssemblyReference.cache
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.AssemblyInfoInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.AssemblyInfo.cs
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.csproj.CoreCompileInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.dll
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\refint\TodoApp.Domain.dll
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.pdb
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\TodoApp.Domain.genruntimeconfig.cache
+D:\FPT_Software\Project_TodoApplication\src\1.Domain\TodoApp.Domain\obj\Debug\net8.0\ref\TodoApp.Domain.dll

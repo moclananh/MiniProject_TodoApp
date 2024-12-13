@@ -1,0 +1,15 @@
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\bin\Debug\net8.0\TodoApp.Infrastructure.deps.json
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\bin\Debug\net8.0\TodoApp.Infrastructure.dll
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\bin\Debug\net8.0\TodoApp.Infrastructure.pdb
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\bin\Debug\net8.0\TodoApp.Domain.dll
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\bin\Debug\net8.0\TodoApp.Domain.pdb
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.csproj.AssemblyReference.cache
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.AssemblyInfoInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.AssemblyInfo.cs
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.csproj.CoreCompileInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.csproj.CopyComplete
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.dll
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\refint\TodoApp.Infrastructure.dll
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.pdb
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\ref\TodoApp.Infrastructure.dll

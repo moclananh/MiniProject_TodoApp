@@ -1,0 +1,17 @@
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\Todo.Application.deps.json
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\Todo.Application.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\Todo.Application.pdb
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\TodoApp.Domain.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\TodoApp.Infrastructure.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\TodoApp.Domain.pdb
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\bin\Debug\net8.0\TodoApp.Infrastructure.pdb
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.csproj.AssemblyReference.cache
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.AssemblyInfoInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.AssemblyInfo.cs
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.csproj.CoreCompileInputs.cache
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.csproj.CopyComplete
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\refint\Todo.Application.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.pdb
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\ref\Todo.Application.dll
