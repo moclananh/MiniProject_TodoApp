@@ -76,3 +76,4 @@ D:\FPT_Software\Project_TodoApplication\src\4.Apis\Todo.TodoAPI\obj\Debug\net8.0
 D:\FPT_Software\Project_TodoApplication\src\4.Apis\Todo.TodoAPI\obj\Debug\net8.0\Todo.TodoAPI.pdb
 D:\FPT_Software\Project_TodoApplication\src\4.Apis\Todo.TodoAPI\obj\Debug\net8.0\Todo.TodoAPI.genruntimeconfig.cache
 D:\FPT_Software\Project_TodoApplication\src\4.Apis\Todo.TodoAPI\obj\Debug\net8.0\ref\Todo.TodoAPI.dll
+D:\FPT_Software\Project_TodoApplication\src\4.Apis\Todo.TodoAPI\obj\Debug\net8.0\Todo.TodoAPI.sourcelink.json

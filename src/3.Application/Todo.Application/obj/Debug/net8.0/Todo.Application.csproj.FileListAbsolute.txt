@@ -15,3 +15,4 @@ D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\D
 D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\refint\Todo.Application.dll
 D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.pdb
 D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\ref\Todo.Application.dll
+D:\FPT_Software\Project_TodoApplication\src\3.Application\Todo.Application\obj\Debug\net8.0\Todo.Application.sourcelink.json

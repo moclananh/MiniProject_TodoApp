@@ -6,7 +6,6 @@ using TodoApp.Domain.Models;
 using TodoApp.Domain.Models.EF;
 using TodoApp.Infrastructure.Dtos.TodoDtos;
 using TodoApp.Infrastructure.Pagination;
-using TodoApp.Domain.Models.Entities;
 
 namespace Todo.Application.Services.TodoServices
 {
@@ -23,14 +22,24 @@ namespace Todo.Application.Services.TodoServices
             _config = config;
         }
 
-        public async Task<ApiResponse> GetAllTodos(PagingRequest pagingRequest, string? keyword)
+        public async Task<ApiResponse> GetAllTodos(FilterRequest request)
         {
+            var statusParameter = request.Status.HasValue
+      ? request.Status.Value.ToString() // Convert enum to string (e.g., "InProgress")
+      : (object)DBNull.Value; // If null, pass DBNull to the SQL query
+
             var todos = await _dbContext.Todos
-                .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm",
-                    new SqlParameter("@PageNumber", pagingRequest.PageNumber),
-                    new SqlParameter("@PageSize", pagingRequest.PageSize),
-                    new SqlParameter("@SearchTerm", keyword ?? (object)DBNull.Value))
-                .ToListAsync();
+        .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
+            new SqlParameter("@PageNumber", request.PageNumber),
+            new SqlParameter("@PageSize", request.PageSize),
+            new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
+            new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
+            new SqlParameter("@Status", statusParameter),
+            new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
+            new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
+            new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
+            new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
+        .ToListAsync();
 
             var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
@@ -124,11 +133,6 @@ namespace Todo.Application.Services.TodoServices
                 Success = true,
                 Message = "Todo deleted successfully."
             };
-        }
-
-        public Task<ApiResponse> GetAllTodos(PagingRequest pagingRequest)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -17,9 +17,9 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetTodos([FromQuery] PagingRequest pagingRequest, string? keyword)
+        public async Task<IActionResult> GetTodos([FromQuery] FilterRequest request)
         {
-            var response = await _todoService.GetAllTodos(pagingRequest, keyword);
+            var response = await _todoService.GetAllTodos(request);
             return Ok(response);
         }
 

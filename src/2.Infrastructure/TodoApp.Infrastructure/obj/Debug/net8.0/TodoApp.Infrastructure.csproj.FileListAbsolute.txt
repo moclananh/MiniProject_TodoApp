@@ -13,3 +13,4 @@ D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastruct
 D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\refint\TodoApp.Infrastructure.dll
 D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.pdb
 D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\ref\TodoApp.Infrastructure.dll
+D:\FPT_Software\Project_TodoApplication\src\2.Infrastructure\TodoApp.Infrastructure\obj\Debug\net8.0\TodoApp.Infrastructure.sourcelink.json
