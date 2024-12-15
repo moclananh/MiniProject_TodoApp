@@ -6,7 +6,7 @@ namespace TodoApp.Infrastructure.Dtos.TodoDtos
     public class CreateTodoRequest
     {
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public TodoStatus Status { get; set; }
         public int Priority { get; set; }
         public DateTime CreatedDate { get; set; }
