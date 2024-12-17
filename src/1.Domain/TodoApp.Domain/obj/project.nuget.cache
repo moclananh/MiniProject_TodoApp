@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BHTQ/fhaUVMB7Ab6Xx6MFFfI2oJ2+dfk+ZEPCI9ZxBAOm0oMP324P2cfduwxW8pgTjSyGP2DAaTaUlz63nQ7pw==",
+  "dgSpecHash": "gYt5j3mKQOmGHQ6nwqbOVOdtYKvfTZkZkqSY2bQXgd98UEAuhjv/BrHYw+q/xeZvUuuqvL6WZ9bllHaTK/Atog==",
   "success": true,
-  "projectFilePath": "D:\\FPT_Software\\Project_TodoApplication\\src\\1.Domain\\TodoApp.Domain\\TodoApp.Domain.csproj",
+  "projectFilePath": "D:\\FPT_Software\\MiniProject_TodoApp\\src\\1.Domain\\TodoApp.Domain\\TodoApp.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kristino\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\Kristino\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

@@ -17,6 +17,8 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTodos([FromQuery] FilterRequest request)
         {
             var response = await _todoService.GetAllTodos(request);
@@ -24,6 +26,8 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetTodoById(int id)
         {
             var response = await _todoService.GetTodoById(id);
@@ -31,6 +35,8 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todoVm)
         {
             var response = await _todoService.CreateTodo(todoVm);
@@ -38,6 +44,9 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateTodo(int id, [FromBody] UpdateTodoRequest todoVm)
         {
             var response = await _todoService.UpdateTodo(id, todoVm);
@@ -45,6 +54,9 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTodo(int id)
         {
             var response = await _todoService.DeleteTodo(id);

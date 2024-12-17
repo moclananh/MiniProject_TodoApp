@@ -17,6 +17,8 @@ namespace Todo.TodoAPI.Controllers
         }
 
         [HttpPost("Authenticate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginVm request)
         {
             if (!ModelState.IsValid)
@@ -34,6 +36,8 @@ namespace Todo.TodoAPI.Controllers
 
         [HttpPost("Register")]
         [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register([FromBody] RegisterVm request)
         {
             if (!ModelState.IsValid)

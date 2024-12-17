@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "UuLL8+KbYJhoVIEQplDQt4z+MQqqcrXj3aGnHJ4dIoqgoxEMh6CQvCuYPclA76zBJPt6sj/qc3D6DYFAJr19Ag==",
+  "dgSpecHash": "CwbhI/nF6wN/MLwUHZfXLUGZEUakamzJi31rSOb9EBSmtAqsqZGJvQp4spox3Qtoct7HkUxctHbefCHqCi9rfg==",
   "success": true,
-  "projectFilePath": "D:\\FPT_Software\\Project_TodoApplication\\src\\2.Infrastructure\\TodoApp.Infrastructure\\TodoApp.Infrastructure.csproj",
+  "projectFilePath": "D:\\FPT_Software\\MiniProject_TodoApp\\src\\2.Infrastructure\\TodoApp.Infrastructure\\TodoApp.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kristino\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\Kristino\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
