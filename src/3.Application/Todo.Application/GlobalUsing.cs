@@ -1,0 +1,10 @@
+﻿global using TodoApp.BuildingBlock.Exceptions;
+global using TodoApp.Domain.Models;
+global using TodoApp.Infrastructure.Dtos.TodoDtos;
+global using TodoApp.Infrastructure.Pagination;
+global using AutoMapper;
+global using Microsoft.Data.SqlClient;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
+global using Todo.Application.Exceptions.TodoExceptions;
+global using TodoApp.Domain.Models.EF;

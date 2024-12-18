@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TodoApp.BuildingBlock", "src\2.Infrastructure\TodoApp.BuildingBlock\TodoApp.BuildingBlock.csproj", "{E93D5B74-297B-4897-8527-9A9E98D8B3C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{A9DDACA3-1E68-43F4-BB90-16AB603976A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9DDACA3-1E68-43F4-BB90-16AB603976A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9DDACA3-1E68-43F4-BB90-16AB603976A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E93D5B74-297B-4897-8527-9A9E98D8B3C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E93D5B74-297B-4897-8527-9A9E98D8B3C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E93D5B74-297B-4897-8527-9A9E98D8B3C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E93D5B74-297B-4897-8527-9A9E98D8B3C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,6 +61,7 @@ Global
 		{437701D9-0089-4411-9A1B-8121D45A7FED} = {F7D81E8E-8976-4F90-9F4A-03176ABA9E6E}
 		{A7C9959F-269B-412A-B886-5042AFFB3779} = {E3AAEE6C-EDDD-4E89-9508-FACFA6E078FA}
 		{A9DDACA3-1E68-43F4-BB90-16AB603976A0} = {4152E49A-13C4-49AA-9460-ECD904767B65}
+		{E93D5B74-297B-4897-8527-9A9E98D8B3C9} = {F7D81E8E-8976-4F90-9F4A-03176ABA9E6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E4B7EFE2-9066-4840-B26D-82E7D96A90CA}

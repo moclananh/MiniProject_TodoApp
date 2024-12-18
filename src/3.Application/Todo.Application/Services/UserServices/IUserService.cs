@@ -1,6 +1,4 @@
-﻿
-using TodoApp.Domain.Models;
-using TodoApp.Infrastructure.Dtos.UserDtos;
+﻿using TodoApp.Infrastructure.Dtos.UserDtos;
 
 namespace Todo.Application.Services.UserServices
 {

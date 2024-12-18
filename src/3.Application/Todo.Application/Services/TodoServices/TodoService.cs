@@ -1,12 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using TodoApp.Domain.Models;
-using TodoApp.Domain.Models.EF;
-using TodoApp.Infrastructure.Dtos.TodoDtos;
-using TodoApp.Infrastructure.Pagination;
-
+﻿
 namespace Todo.Application.Services.TodoServices
 {
     public class TodoService : ITodoService
@@ -24,33 +16,40 @@ namespace Todo.Application.Services.TodoServices
 
         public async Task<ApiResponse<PagingResult<TodoVm>>> GetAllTodos(FilterRequest request)
         {
-            var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
-
-            var todos = await _dbContext.Todos
-                .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
-                    new SqlParameter("@PageNumber", request.PageNumber),
-                    new SqlParameter("@PageSize", request.PageSize),
-                    new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
-                    new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
-                    new SqlParameter("@Status", statusParameter),
-                    new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
-                    new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
-                    new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
-                    new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
-                .ToListAsync();
-
-            var totalCount = await _dbContext.Todos.CountAsync();
-
-            var todoListVm = _mapper.Map<List<TodoVm>>(todos);
-
-            var pagingResult = new PagingResult<TodoVm>(request.PageNumber, request.PageSize, totalCount, todoListVm);
-
-            return new ApiResponse<PagingResult<TodoVm>>
+            try
             {
-                Success = true,
-                Message = "Todos fetched successfully.",
-                Data = pagingResult
-            };
+                var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
+
+                var todos = await _dbContext.Todos
+                    .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
+                        new SqlParameter("@PageNumber", request.PageNumber),
+                        new SqlParameter("@PageSize", request.PageSize),
+                        new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
+                        new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
+                        new SqlParameter("@Status", statusParameter),
+                        new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
+                        new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
+                        new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
+                        new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
+                    .ToListAsync();
+
+                var totalCount = await _dbContext.Todos.CountAsync();
+
+                var todoListVm = _mapper.Map<List<TodoVm>>(todos);
+
+                var pagingResult = new PagingResult<TodoVm>(request.PageNumber, request.PageSize, totalCount, todoListVm);
+
+                return new ApiResponse<PagingResult<TodoVm>>
+                {
+                    Success = true,
+                    Message = "Todos fetched successfully.",
+                    Data = pagingResult
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new TodoBadRequestException("Fetch data failed. Error: ", ex.Message);
+            }
         }
 
         public async Task<ApiResponse> GetTodoById(int id)
@@ -60,13 +59,9 @@ namespace Todo.Application.Services.TodoServices
               .ToListAsync())
               .SingleOrDefault();
 
-            if (todo == null)
+            if (todo is null)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = "Todo not found!"
-                };
+                throw new TodoNotFoundException(id);
             }
 
             var todoVm = _mapper.Map<TodoVm>(todo);
@@ -105,28 +100,15 @@ namespace Todo.Application.Services.TodoServices
             }
             catch (Exception ex)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = $"Failed to create Todo. Error: {ex.Message}"
-                };
+                throw new TodoBadRequestException("Create failed. Error: ", ex.Message);
             }
         }
 
         public async Task<ApiResponse> UpdateTodo(int id, UpdateTodoRequest todoVm)
         {
+            await GetTodoById(id);
             try
             {
-                var todoExists = await GetTodoById(id);
-                if (!todoExists.Success)
-                {
-                    return new ApiResponse
-                    {
-                        Success = false,
-                        Message = "Todo not found!"
-                    };
-                }
-
                 var parameters = new[]
                 {
                     new SqlParameter("@Id", id),
@@ -150,28 +132,15 @@ namespace Todo.Application.Services.TodoServices
             }
             catch (Exception ex)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = $"Failed to update Todo. Error: {ex.Message}"
-                };
+                throw new TodoBadRequestException("Update failed. Error: ", ex.Message);
             }
         }
 
         public async Task<ApiResponse> DeleteTodo(int id)
         {
+            await GetTodoById(id);
             try
             {
-                var todoExists = await GetTodoById(id);
-                if (!todoExists.Success)
-                {
-                    return new ApiResponse
-                    {
-                        Success = false,
-                        Message = "Todo not found!"
-                    };
-                }
-
                 var parameter = new SqlParameter("@Id", id);
                 await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.DeleteTodo @Id", parameter);
 
@@ -183,11 +152,7 @@ namespace Todo.Application.Services.TodoServices
             }
             catch (Exception ex)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = $"Failed to delete Todo. Error: {ex.Message}"
-                };
+                throw new TodoBadRequestException("Delete failed. Error: ", ex.Message);
             }
         }
     }

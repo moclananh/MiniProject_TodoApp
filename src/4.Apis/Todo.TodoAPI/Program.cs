@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,17 +5,15 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Todo.Application.Services.TodoServices;
 using Todo.Application.Services.UserServices;
+using TodoApp.BuildingBlock.Exceptions.Handler;
 using TodoApp.Domain.Models;
 using TodoApp.Domain.Models.EF;
 using TodoApp.Infrastructure.Extentions;
-using TodoApp.Infrastructure.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 //config connection with db
@@ -29,9 +26,11 @@ builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSett
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddTransient<ITodoService, TodoService>();
 
-// Register infrastructure services (like AutoMapper) in the API project
+//register infrastructure services
 builder.Services.AddInfrastructureServices();
-//builder.Services.AddAutoMapper(typeof(MapperConfig));
+
+//register custom exception
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 //setting JWT
 var secretKey = builder.Configuration["AppSettings:SecretKey"];
@@ -108,6 +107,9 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 //use cors
 app.UseCors("AllowSpecificOrigins");
+
+//use custom exception
+app.UseExceptionHandler(option => { });
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

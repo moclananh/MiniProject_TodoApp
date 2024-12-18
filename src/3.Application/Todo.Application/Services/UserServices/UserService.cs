@@ -1,15 +1,10 @@
-﻿
-
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using TodoApp.Domain.Models;
-using TodoApp.Domain.Models.EF;
+using Todo.Application.Exceptions.UserExceptions;
 using TodoApp.Domain.Models.Entities;
 using TodoApp.Infrastructure.Dtos.UserDtos;
 
@@ -33,13 +28,9 @@ namespace Todo.Application.Services.UserServices
             // Retrieve the user by email asynchronously
             var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
-            if (user == null)
+            if (user is null)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = "User does not exist!"
-                };
+               throw new UserNotFoundException();
             }
 
             // Verify the password
@@ -48,11 +39,7 @@ namespace Todo.Application.Services.UserServices
 
             if (result == PasswordVerificationResult.Failed)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = "Password is incorrect!"
-                };
+                throw new UserBadRequestException("Password does not correct!");
             }
 
             // Generate a token if the password is valid
@@ -71,20 +58,12 @@ namespace Todo.Application.Services.UserServices
 
             if (checkEmail != null)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = "Email is already registered. Please use a different email."
-                };
+                throw new UserBadRequestException("Email is already registered. Please use a different email.");
             }
             var checkUserName = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserName == request.UserName);
             if (checkUserName != null)
             {
-                return new ApiResponse
-                {
-                    Success = false,
-                    Message = "Username is already registered. Please use a different Username."
-                };
+                throw new UserBadRequestException("Username is already registered. Please use a different username.");
             }
             // Create a new user based on the registration request
             var passwordHasher = new PasswordHasher<User>();
@@ -119,7 +98,7 @@ namespace Todo.Application.Services.UserServices
                 new Claim("Id", user.Id.ToString()),
                 new Claim("TokenId", Guid.NewGuid().ToString())
             }),
-                Expires = DateTime.UtcNow.AddMinutes(1), // Set token expiration
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(secretKeyBytes),
                     SecurityAlgorithms.HmacSha256Signature)

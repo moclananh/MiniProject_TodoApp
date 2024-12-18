@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\1.Domain\TodoApp.Domain\TodoApp.Domain.csproj" />
+    <ProjectReference Include="..\..\2.Infrastructure\TodoApp.BuildingBlock\TodoApp.BuildingBlock.csproj" />
     <ProjectReference Include="..\..\2.Infrastructure\TodoApp.Infrastructure\TodoApp.Infrastructure.csproj" />
   </ItemGroup>
 

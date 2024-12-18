@@ -21,11 +21,11 @@ namespace TodoApp.Domain.FluentAPIs
                    .HasMaxLength(100);
 
             builder.Property(t => t.Description)
-                   .HasMaxLength(1000); // Optional or default max length
+                   .HasMaxLength(1000);
 
             builder.Property(t => t.Status)
                        .IsRequired()
-                       .HasConversion<string>() // Save enum as string in the database
+                       .HasConversion<string>()
                        .HasMaxLength(20);
 
             builder.Property(t => t.Priority)

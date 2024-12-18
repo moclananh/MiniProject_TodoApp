@@ -1,10 +1,4 @@
-﻿
-
-using TodoApp.Domain.Models;
-using TodoApp.Infrastructure.Dtos.TodoDtos;
-using TodoApp.Infrastructure.Pagination;
-
-namespace Todo.Application.Services.TodoServices
+﻿namespace Todo.Application.Services.TodoServices
 {
     public interface ITodoService
     {
