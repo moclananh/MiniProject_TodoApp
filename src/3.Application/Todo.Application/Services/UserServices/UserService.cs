@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,76 +14,106 @@ namespace Todo.Application.Services.UserServices
     public class UserService : IUserService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly IConfiguration _config;
         private readonly AppSetting _app;
 
-        public UserService(ApplicationDbContext context, IConfiguration configuration, IOptionsMonitor<AppSetting> optionsMonitor)
+        public UserService(ApplicationDbContext context, IOptionsMonitor<AppSetting> optionsMonitor)
         {
             _dbContext = context;
-            _config = configuration;
             _app = optionsMonitor.CurrentValue;
         }
 
         public async Task<ApiResponse> Authencate(LoginVm request)
         {
-            // Retrieve the user by email asynchronously
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
-
-            if (user is null)
+            var parameters = new[]
             {
-               throw new UserNotFoundException();
-            }
-
-            // Verify the password
-            var passwordHasher = new PasswordHasher<User>();
-            var result = passwordHasher.VerifyHashedPassword(user, user.Password, request.Password);
-
-            if (result == PasswordVerificationResult.Failed)
-            {
-                throw new UserBadRequestException("Password does not correct!");
-            }
-
-            // Generate a token if the password is valid
-            return new ApiResponse
-            {
-                Success = true,
-                Message = "Login Success!",
-                Data = GenerateToken(user)
+                new SqlParameter("@Email", request.Email),
+                new SqlParameter("@Password", request.Password),
+                new SqlParameter("@UserId", SqlDbType.UniqueIdentifier) { Direction = ParameterDirection.Output },
+                new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Direction = ParameterDirection.Output },
+                new SqlParameter("@EmailOut", SqlDbType.NVarChar, 256) { Direction = ParameterDirection.Output },
+                new SqlParameter("@HashedPassword", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output }, // Output hashed password
+                new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
             };
+
+            await _dbContext.Database.ExecuteSqlRawAsync(
+                "EXEC dbo.AuthenticateUser @Email, @Password, @UserId OUTPUT, @UserName OUTPUT, @EmailOut OUTPUT, @HashedPassword OUTPUT, @Result OUTPUT",
+                parameters);
+
+            // Response code
+            var result = (int)parameters[6].Value;
+
+            // User not exist
+            if (result == -1)
+            {
+                throw new UserNotFoundException();
+            }
+
+            if (result == 1)
+            {
+                var hashedPassword = (string)parameters[5].Value;
+                var passwordHasher = new PasswordHasher<LoginVm>();
+                var verificationResult = passwordHasher.VerifyHashedPassword(request, hashedPassword, request.Password);
+
+                if (verificationResult == PasswordVerificationResult.Failed)
+                {
+                    throw new UserBadRequestException("Wrong password.");
+                }
+
+                var user = new User
+                {
+                    Id = (Guid)parameters[2].Value,
+                    UserName = (string)parameters[3].Value,
+                    Email = (string)parameters[4].Value,
+                };
+
+                return new ApiResponse
+                {
+                    Success = true,
+                    Message = "Login successful!",
+                    Data = GenerateToken(user)
+                };
+            }
+
+            throw new InternalServerException("Error from server.");
         }
 
         public async Task<ApiResponse> Register(RegisterVm request)
         {
-            // Check if a user with the same email already exists in the database
-            var checkEmail = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
+            var passwordHasher = new PasswordHasher<RegisterVm>();
+            var hashedPassword = passwordHasher.HashPassword(request, request.Password); // Hash the password
 
-            if (checkEmail != null)
+            var parameters = new[]
+            {
+                new SqlParameter("@UserName", request.UserName),
+                new SqlParameter("@Email", request.Email),
+                new SqlParameter("@Password", hashedPassword),
+                new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
+            };
+
+            await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.RegisterUser @UserName, @Email, @Password, @Result OUTPUT", parameters);
+
+            var result = (int)parameters[3].Value;
+
+            // Handle result codes
+            if (result == -1)
             {
                 throw new UserBadRequestException("Email is already registered. Please use a different email.");
             }
-            var checkUserName = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserName == request.UserName);
-            if (checkUserName != null)
+
+            if (result == -2)
             {
                 throw new UserBadRequestException("Username is already registered. Please use a different username.");
             }
-            // Create a new user based on the registration request
-            var passwordHasher = new PasswordHasher<User>();
-            var newUser = new User
-            {
-                UserName = request.UserName,
-                Email = request.Email,
-                Password = passwordHasher.HashPassword(null, request.Password) // Hash the password
-            };
 
-            // Add the new user to the database asynchronously
-            await _dbContext.Users.AddAsync(newUser);
-            await _dbContext.SaveChangesAsync();
-
-            return new ApiResponse
+            if (result == 1)
             {
-                Success = true,
-                Message = "Registration Successful!"
-            };
+                return new ApiResponse
+                {
+                    Success = true,
+                    Message = "Registration Successful!"
+                };
+            }
+            throw new InternalServerException("Error from server");
         }
 
         private string GenerateToken(User user)
