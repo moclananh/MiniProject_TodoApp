@@ -67,9 +67,9 @@ namespace Todo.Application.Services.UserServices
         public async Task<ApiResponse> Register(RegisterVm request)
         {
             // Check if a user with the same email already exists in the database
-            var existingUser = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
+            var checkEmail = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == request.Email);
 
-            if (existingUser != null)
+            if (checkEmail != null)
             {
                 return new ApiResponse
                 {
@@ -77,7 +77,15 @@ namespace Todo.Application.Services.UserServices
                     Message = "Email is already registered. Please use a different email."
                 };
             }
-
+            var checkUserName = await _dbContext.Users.SingleOrDefaultAsync(x => x.UserName == request.UserName);
+            if (checkUserName != null)
+            {
+                return new ApiResponse
+                {
+                    Success = false,
+                    Message = "Username is already registered. Please use a different Username."
+                };
+            }
             // Create a new user based on the registration request
             var passwordHasher = new PasswordHasher<User>();
             var newUser = new User

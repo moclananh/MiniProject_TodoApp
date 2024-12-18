@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using TodoApp.Domain.Models;
 using TodoApp.Domain.Models.EF;
 using TodoApp.Infrastructure.Dtos.TodoDtos;
+using TodoApp.Infrastructure.Pagination;
 
 namespace Todo.Application.Services.TodoServices
 {
@@ -21,30 +22,36 @@ namespace Todo.Application.Services.TodoServices
             _config = config;
         }
 
-        public async Task<ApiResponse> GetAllTodos(FilterRequest request)
+        public async Task<ApiResponse<PagingResult<TodoVm>>> GetAllTodos(FilterRequest request)
         {
             var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
 
+            // Get the filtered todos with pagination
             var todos = await _dbContext.Todos
-            .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
-                new SqlParameter("@PageNumber", request.PageNumber),
-                new SqlParameter("@PageSize", request.PageSize),
-                new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
-                new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
-                new SqlParameter("@Status", statusParameter),
-                new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
-                new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
-                new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
-                new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
-            .ToListAsync();
+                .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
+                    new SqlParameter("@PageNumber", request.PageNumber),
+                    new SqlParameter("@PageSize", request.PageSize),
+                    new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
+                    new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
+                    new SqlParameter("@Status", statusParameter),
+                    new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
+                    new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
+                    new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
+                    new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
+                .ToListAsync();
+
+            var totalCount = await _dbContext.Todos.CountAsync();
 
             var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
-            return new ApiResponse
+            // Create a paging result
+            var pagingResult = new PagingResult<TodoVm>(request.PageNumber, request.PageSize, totalCount, todoListVm);
+
+            return new ApiResponse<PagingResult<TodoVm>>
             {
                 Success = true,
                 Message = "Todos fetched successfully.",
-                Data = todoListVm
+                Data = pagingResult
             };
         }
 
