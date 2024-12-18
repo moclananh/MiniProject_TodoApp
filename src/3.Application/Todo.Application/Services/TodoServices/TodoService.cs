@@ -26,7 +26,6 @@ namespace Todo.Application.Services.TodoServices
         {
             var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
 
-            // Get the filtered todos with pagination
             var todos = await _dbContext.Todos
                 .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
                     new SqlParameter("@PageNumber", request.PageNumber),
@@ -44,7 +43,6 @@ namespace Todo.Application.Services.TodoServices
 
             var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
-            // Create a paging result
             var pagingResult = new PagingResult<TodoVm>(request.PageNumber, request.PageSize, totalCount, todoListVm);
 
             return new ApiResponse<PagingResult<TodoVm>>
@@ -107,7 +105,6 @@ namespace Todo.Application.Services.TodoServices
             }
             catch (Exception ex)
             {
-                // Log exception
                 return new ApiResponse
                 {
                     Success = false,
@@ -120,9 +117,8 @@ namespace Todo.Application.Services.TodoServices
         {
             try
             {
-                // Verify if the todo exists
-                var todoExists = await _dbContext.Todos.AnyAsync(t => t.Id == id);
-                if (!todoExists)
+                var todoExists = await GetTodoById(id);
+                if (!todoExists.Success)
                 {
                     return new ApiResponse
                     {
@@ -144,7 +140,6 @@ namespace Todo.Application.Services.TodoServices
                     new SqlParameter("@IsActive", todoVm.IsActive)
                 };
 
-                // Execute the stored procedure
                 await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.UpdateTodo @Id, @Title, @Desciption, @Status, @Priority, @CreatedDate, @EndDate, @Star, @IsActive", parameters);
 
                 return new ApiResponse
@@ -167,9 +162,8 @@ namespace Todo.Application.Services.TodoServices
         {
             try
             {
-                // Verify if the todo exists
-                var todoExists = await _dbContext.Todos.AnyAsync(t => t.Id == id);
-                if (!todoExists)
+                var todoExists = await GetTodoById(id);
+                if (!todoExists.Success)
                 {
                     return new ApiResponse
                     {
@@ -178,7 +172,6 @@ namespace Todo.Application.Services.TodoServices
                     };
                 }
 
-                // Call the stored procedure for deletion
                 var parameter = new SqlParameter("@Id", id);
                 await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.DeleteTodo @Id", parameter);
 
