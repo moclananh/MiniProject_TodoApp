@@ -8,7 +8,7 @@ namespace TodoApp.Infrastructure.Dtos.TodoDtos
     public class FilterRequest : PagingRequest
     {
         public string? Title { get; set; }
-        public string? Priority { get; set; }
+        public int? Priority { get; set; }
         public TodoStatus? Status { get; set; }
         public bool? Star {  get; set; }
         public bool? IsActive { get; set; }
