@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoApp.Domain.Models.EF;
 
@@ -11,9 +12,11 @@ using TodoApp.Domain.Models.EF;
 namespace TodoApp.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241218125334_newMigration")]
+    partial class newMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace TodoApp.Domain.Migrations
                     b.Property<bool>("Star")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime?>("StarDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Status")

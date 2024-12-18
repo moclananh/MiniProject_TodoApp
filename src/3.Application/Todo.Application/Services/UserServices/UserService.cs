@@ -22,8 +22,9 @@ namespace Todo.Application.Services.UserServices
             _app = optionsMonitor.CurrentValue;
         }
 
-        public async Task<ApiResponse> Authencate(LoginVm request)
+        public async Task<LoginResponse> Authencate(LoginVm request)
         {
+            // Define SQL parameters
             var parameters = new[]
             {
                 new SqlParameter("@Email", request.Email),
@@ -31,18 +32,19 @@ namespace Todo.Application.Services.UserServices
                 new SqlParameter("@UserId", SqlDbType.UniqueIdentifier) { Direction = ParameterDirection.Output },
                 new SqlParameter("@UserName", SqlDbType.NVarChar, 256) { Direction = ParameterDirection.Output },
                 new SqlParameter("@EmailOut", SqlDbType.NVarChar, 256) { Direction = ParameterDirection.Output },
-                new SqlParameter("@HashedPassword", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output }, // Output hashed password
+                new SqlParameter("@HashedPassword", SqlDbType.NVarChar, -1) { Direction = ParameterDirection.Output },
                 new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
             };
 
+            // Execute the stored procedure
             await _dbContext.Database.ExecuteSqlRawAsync(
                 "EXEC dbo.AuthenticateUser @Email, @Password, @UserId OUTPUT, @UserName OUTPUT, @EmailOut OUTPUT, @HashedPassword OUTPUT, @Result OUTPUT",
                 parameters);
 
-            // Response code
+            // Extract the result code
             var result = (int)parameters[6].Value;
 
-            // User not exist
+            // Handle different result codes
             if (result == -1)
             {
                 throw new UserNotFoundException();
@@ -50,31 +52,40 @@ namespace Todo.Application.Services.UserServices
 
             if (result == 1)
             {
+                // Verify the password
                 var hashedPassword = (string)parameters[5].Value;
                 var passwordHasher = new PasswordHasher<LoginVm>();
                 var verificationResult = passwordHasher.VerifyHashedPassword(request, hashedPassword, request.Password);
 
                 if (verificationResult == PasswordVerificationResult.Failed)
                 {
-                    throw new UserBadRequestException("Wrong password.");
+                    throw new UserBadRequestException("Incorrect password.");
                 }
 
-                var user = new User
-                {
-                    Id = (Guid)parameters[2].Value,
-                    UserName = (string)parameters[3].Value,
-                    Email = (string)parameters[4].Value,
-                };
-
-                return new ApiResponse
+                var loginResponse = new LoginResponse
                 {
                     Success = true,
                     Message = "Login successful!",
-                    Data = GenerateToken(user)
+                    Id = (Guid)parameters[2].Value,
+                    UserName = (string)parameters[3].Value,
+                    Email = (string)parameters[4].Value
                 };
+
+                // Optionally, you can also include the token or other login-related data here if needed
+                loginResponse.Data = GenerateToken(new User
+                {
+                    Id = loginResponse.Id,
+                    UserName = loginResponse.UserName,
+                    Email = loginResponse.Email
+                });
+
+                return loginResponse;
             }
 
-            throw new InternalServerException("Error from server.");
+            // Handle unexpected results
+            throw new InternalServerException("Unexpected server error during authentication.");
+
+
         }
 
         public async Task<ApiResponse> Register(RegisterVm request)
@@ -90,30 +101,31 @@ namespace Todo.Application.Services.UserServices
                 new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
             };
 
-            await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.RegisterUser @UserName, @Email, @Password, @Result OUTPUT", parameters);
+            // Execute stored procedure to register the user
+            await _dbContext.Database.ExecuteSqlRawAsync(
+                "EXEC dbo.RegisterUser @UserName, @Email, @Password, @Result OUTPUT",
+                parameters
+            );
 
+            // Get the result code
             var result = (int)parameters[3].Value;
 
             // Handle result codes
-            if (result == -1)
+            switch (result)
             {
-                throw new UserBadRequestException("Email is already registered. Please use a different email.");
+                case -1:
+                    throw new UserBadRequestException("Email is already registered. Please use a different email.");
+                case -2:
+                    throw new UserBadRequestException("Username is already registered. Please use a different username.");
+                case 1:
+                    return new ApiResponse
+                    {
+                        Success = true,
+                        Message = "Registration Successful!"
+                    };
+                default:
+                    throw new InternalServerException("Unexpected error during registration.");
             }
-
-            if (result == -2)
-            {
-                throw new UserBadRequestException("Username is already registered. Please use a different username.");
-            }
-
-            if (result == 1)
-            {
-                return new ApiResponse
-                {
-                    Success = true,
-                    Message = "Registration Successful!"
-                };
-            }
-            throw new InternalServerException("Error from server");
         }
 
         private string GenerateToken(User user)

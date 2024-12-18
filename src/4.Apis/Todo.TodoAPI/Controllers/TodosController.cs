@@ -26,6 +26,15 @@ namespace Todo.TodoAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet("GetTodosByUserId/{userId:guid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetTodosByUserId(Guid userId, [FromQuery] FilterRequest request)
+        {
+            var response = await _todoService.GetTodosByUserId(userId, request);
+            return Ok(response);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

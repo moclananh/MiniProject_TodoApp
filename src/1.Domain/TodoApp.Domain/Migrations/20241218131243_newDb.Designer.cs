@@ -12,8 +12,8 @@ using TodoApp.Domain.Models.EF;
 namespace TodoApp.Domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241213072708_initMigration")]
-    partial class initMigration
+    [Migration("20241218131243_newDb")]
+    partial class newDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,7 +33,8 @@ namespace TodoApp.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime?>("CreatedDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
@@ -41,7 +42,8 @@ namespace TodoApp.Domain.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsActive")
@@ -53,6 +55,9 @@ namespace TodoApp.Domain.Migrations
                     b.Property<bool>("Star")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -63,9 +68,14 @@ namespace TodoApp.Domain.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Title");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Todos");
                 });
@@ -100,6 +110,22 @@ namespace TodoApp.Domain.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TodoApp.Domain.Models.Entities.Todo", b =>
+                {
+                    b.HasOne("TodoApp.Domain.Models.Entities.User", "User")
+                        .WithMany("Todos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TodoApp.Domain.Models.Entities.User", b =>
+                {
+                    b.Navigation("Todos");
                 });
 #pragma warning restore 612, 618
         }
