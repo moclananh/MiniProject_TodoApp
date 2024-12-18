@@ -21,7 +21,7 @@ namespace Todo.Application.Services.TodoServices
                 var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
 
                 var todos = await _dbContext.Todos
-                    .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @CreatedDate, @EndDate",
+                    .FromSqlRaw("EXEC dbo.GetTodosWithPaging @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @StartDate, @EndDate, @CreatedDate",
                         new SqlParameter("@PageNumber", request.PageNumber),
                         new SqlParameter("@PageSize", request.PageSize),
                         new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
@@ -29,11 +29,55 @@ namespace Todo.Application.Services.TodoServices
                         new SqlParameter("@Status", statusParameter),
                         new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
                         new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
-                        new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
-                        new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value))
+                        new SqlParameter("@StartDate", request.CreatedDate ?? (object)DBNull.Value),
+                        new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value),
+                        new SqlParameter("@CreatedDate", request.EndDate ?? (object)DBNull.Value))
                     .ToListAsync();
 
                 var totalCount = await _dbContext.Todos.CountAsync();
+
+                var todoListVm = _mapper.Map<List<TodoVm>>(todos);
+
+                var pagingResult = new PagingResult<TodoVm>(request.PageNumber, request.PageSize, totalCount, todoListVm);
+
+                return new ApiResponse<PagingResult<TodoVm>>
+                {
+                    Success = true,
+                    Message = "Todos fetched successfully.",
+                    Data = pagingResult
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new TodoBadRequestException("Fetch data failed. Error: ", ex.Message);
+            }
+        }
+
+        public async Task<ApiResponse<PagingResult<TodoVm>>> GetTodosByUserId(Guid userId, FilterRequest request)
+        {
+            try
+            {
+                var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
+
+                var todos = await _dbContext.Todos
+                    .FromSqlRaw(
+                        "EXEC dbo.GetTodosByUserIdWithPaging @UserId, @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @StartDate, @EndDate, @CreatedDate",
+                        new SqlParameter("@UserId", userId),
+                        new SqlParameter("@PageNumber", request.PageNumber),
+                        new SqlParameter("@PageSize", request.PageSize),
+                        new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
+                        new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
+                        new SqlParameter("@Status", statusParameter),
+                        new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
+                        new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
+                        new SqlParameter("@StartDate", request.CreatedDate ?? (object)DBNull.Value),
+                        new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value),
+                        new SqlParameter("@CreatedDate", request.EndDate ?? (object)DBNull.Value))
+                    .ToListAsync();
+
+                var totalCount = await _dbContext.Todos
+                    .Where(t => t.UserId == userId)
+                    .CountAsync();
 
                 var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
@@ -81,16 +125,20 @@ namespace Todo.Application.Services.TodoServices
                 var parameters = new[]
                 {
                     new SqlParameter("@Title", todoVm.Title),
-                    new SqlParameter("@Desciption", (object?)todoVm.Description ?? DBNull.Value),
+                    new SqlParameter("@Description", (object?)todoVm.Description ?? DBNull.Value),
                     new SqlParameter("@Status", todoVm.Status.ToString()),
                     new SqlParameter("@Priority", todoVm.Priority),
-                    new SqlParameter("@CreatedDate", todoVm.CreatedDate),
-                    new SqlParameter("@EndDate", todoVm.EndDate),
+                    new SqlParameter("@StarDate", (object?)todoVm.StartDate ?? DBNull.Value),
+                    new SqlParameter("@EndDate", (object?)todoVm.EndDate ?? DBNull.Value),
+                    new SqlParameter("@CreatedDate", todoVm.CreatedDate ?? DateTime.UtcNow),
                     new SqlParameter("@Star", todoVm.Star),
-                    new SqlParameter("@IsActive", todoVm.IsActive)
+                    new SqlParameter("@IsActive", todoVm.IsActive),
+                    new SqlParameter("@UserId", todoVm.UserId)
                 };
 
-                await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.CreateTodo @Title, @Desciption, @Status, @Priority, @CreatedDate, @EndDate, @Star, @IsActive", parameters);
+                await _dbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC dbo.CreateTodo @Title, @Description, @Status, @Priority, @StarDate, @EndDate, @CreatedDate, @Star, @IsActive, @UserId",
+                    parameters);
 
                 return new ApiResponse
                 {
@@ -107,22 +155,25 @@ namespace Todo.Application.Services.TodoServices
         public async Task<ApiResponse> UpdateTodo(int id, UpdateTodoRequest todoVm)
         {
             await GetTodoById(id);
+
             try
             {
                 var parameters = new[]
                 {
                     new SqlParameter("@Id", id),
                     new SqlParameter("@Title", todoVm.Title),
-                    new SqlParameter("@Desciption", (object?)todoVm.Description ?? DBNull.Value),
+                    new SqlParameter("@Description", (object?)todoVm.Description ?? DBNull.Value),
                     new SqlParameter("@Status", todoVm.Status.ToString()),
                     new SqlParameter("@Priority", todoVm.Priority),
-                    new SqlParameter("@CreatedDate", todoVm.CreatedDate),
-                    new SqlParameter("@EndDate", todoVm.EndDate),
+                    new SqlParameter("@StarDate", (object?)todoVm.StartDate ?? DBNull.Value),
+                    new SqlParameter("@EndDate", (object?)todoVm.EndDate ?? DBNull.Value),
                     new SqlParameter("@Star", todoVm.Star),
                     new SqlParameter("@IsActive", todoVm.IsActive)
                 };
 
-                await _dbContext.Database.ExecuteSqlRawAsync("EXEC dbo.UpdateTodo @Id, @Title, @Desciption, @Status, @Priority, @CreatedDate, @EndDate, @Star, @IsActive", parameters);
+                await _dbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC dbo.UpdateTodo @Id, @Title, @Description, @Status, @Priority, @StarDate, @EndDate, @Star, @IsActive",
+                    parameters);
 
                 return new ApiResponse
                 {

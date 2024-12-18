@@ -43,6 +43,12 @@ namespace TodoApp.Domain.FluentAPIs
             builder.Property(t => t.IsActive)
                    .IsRequired();
 
+            // Foreign key configuration
+            builder.HasOne(t => t.User)
+                   .WithMany(u => u.Todos)
+                   .HasForeignKey(t => t.UserId)
+                   .IsRequired();
+
             // Indexes
             builder.HasIndex(t => t.Title); // Add an index to improve search
         }

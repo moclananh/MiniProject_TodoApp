@@ -106,7 +106,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 //use cors
-app.UseCors("AllowSpecificOrigins");
+app.UseCors("AllowAll");
 
 //use custom exception
 app.UseExceptionHandler(option => { });
