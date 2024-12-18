@@ -24,7 +24,6 @@ namespace Todo.Application.Services.UserServices
 
         public async Task<LoginResponse> Authencate(LoginVm request)
         {
-            // Define SQL parameters
             var parameters = new[]
             {
                 new SqlParameter("@Email", request.Email),
@@ -36,15 +35,11 @@ namespace Todo.Application.Services.UserServices
                 new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
             };
 
-            // Execute the stored procedure
             await _dbContext.Database.ExecuteSqlRawAsync(
                 "EXEC dbo.AuthenticateUser @Email, @Password, @UserId OUTPUT, @UserName OUTPUT, @EmailOut OUTPUT, @HashedPassword OUTPUT, @Result OUTPUT",
                 parameters);
 
-            // Extract the result code
             var result = (int)parameters[6].Value;
-
-            // Handle different result codes
             if (result == -1)
             {
                 throw new UserNotFoundException();
@@ -52,7 +47,6 @@ namespace Todo.Application.Services.UserServices
 
             if (result == 1)
             {
-                // Verify the password
                 var hashedPassword = (string)parameters[5].Value;
                 var passwordHasher = new PasswordHasher<LoginVm>();
                 var verificationResult = passwordHasher.VerifyHashedPassword(request, hashedPassword, request.Password);
@@ -71,7 +65,6 @@ namespace Todo.Application.Services.UserServices
                     Email = (string)parameters[4].Value
                 };
 
-                // Optionally, you can also include the token or other login-related data here if needed
                 loginResponse.Data = GenerateToken(new User
                 {
                     Id = loginResponse.Id,
@@ -81,17 +74,13 @@ namespace Todo.Application.Services.UserServices
 
                 return loginResponse;
             }
-
-            // Handle unexpected results
             throw new InternalServerException("Unexpected server error during authentication.");
-
-
         }
 
         public async Task<ApiResponse> Register(RegisterVm request)
         {
             var passwordHasher = new PasswordHasher<RegisterVm>();
-            var hashedPassword = passwordHasher.HashPassword(request, request.Password); // Hash the password
+            var hashedPassword = passwordHasher.HashPassword(request, request.Password);
 
             var parameters = new[]
             {
@@ -101,16 +90,12 @@ namespace Todo.Application.Services.UserServices
                 new SqlParameter("@Result", SqlDbType.Int) { Direction = ParameterDirection.Output }
             };
 
-            // Execute stored procedure to register the user
             await _dbContext.Database.ExecuteSqlRawAsync(
                 "EXEC dbo.RegisterUser @UserName, @Email, @Password, @Result OUTPUT",
                 parameters
             );
 
-            // Get the result code
             var result = (int)parameters[3].Value;
-
-            // Handle result codes
             switch (result)
             {
                 case -1:
