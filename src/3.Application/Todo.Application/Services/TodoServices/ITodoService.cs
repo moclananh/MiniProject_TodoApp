@@ -7,6 +7,7 @@
         Task<ApiResponse> GetTodoById(int id);
         Task<ApiResponse> CreateTodo(CreateTodoRequest todoVm);
         Task<ApiResponse> UpdateTodo(int id, UpdateTodoRequest todoVm);
+        Task<ApiResponse> StarUpdate(int id);
         Task<ApiResponse> DeleteTodo(int id);
     }
 

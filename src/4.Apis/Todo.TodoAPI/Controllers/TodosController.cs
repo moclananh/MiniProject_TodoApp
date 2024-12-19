@@ -63,6 +63,16 @@ namespace Todo.TodoAPI.Controllers
             return Ok(response);
         }
 
+        [HttpPatch("StarUpdate/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> StarUpdate(int id)
+        {
+            var response = await _todoService.StarUpdate(id);
+            return Ok(response);
+        }
+
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

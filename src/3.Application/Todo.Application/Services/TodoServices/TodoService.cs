@@ -206,5 +206,42 @@ namespace Todo.Application.Services.TodoServices
                 throw new TodoBadRequestException("Delete failed. Error: ", ex.Message);
             }
         }
+
+        public async Task<ApiResponse> StarUpdate(int id)
+        {
+            await GetTodoById(id);
+            try
+            {
+                var starParameter = new SqlParameter
+                {
+                    ParameterName = "@Result",
+                    SqlDbType = System.Data.SqlDbType.Bit,
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                var parameters = new[]
+                {
+                    new SqlParameter("@Id", id),
+                    starParameter
+                };
+
+                await _dbContext.Database.ExecuteSqlRawAsync(
+                    "EXEC dbo.ToggleTodoStar @Id, @Result OUTPUT",
+                    parameters);
+
+                var newStarValue = (bool)starParameter.Value;
+
+                return new ApiResponse
+                {
+                    Success = true,
+                    Message = $"Todo star toggled successfully. New value: {newStarValue}",
+                    Data = newStarValue
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new TodoBadRequestException("Failed to toggle star. Error: ", ex.Message);
+            }
+        }
     }
 }
