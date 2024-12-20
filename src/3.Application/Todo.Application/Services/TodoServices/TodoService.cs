@@ -55,6 +55,7 @@ namespace Todo.Application.Services.TodoServices
 
         public async Task<ApiResponse<PagingResult<TodoVm>>> GetTodosByUserId(Guid userId, FilterRequest request)
         {
+
             try
             {
                 var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
@@ -70,14 +71,12 @@ namespace Todo.Application.Services.TodoServices
                         new SqlParameter("@Status", statusParameter),
                         new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
                         new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
-                        new SqlParameter("@StartDate", request.CreatedDate ?? (object)DBNull.Value),
+                        new SqlParameter("@StartDate", request.StartDate ?? (object)DBNull.Value),
                         new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value),
-                        new SqlParameter("@CreatedDate", request.EndDate ?? (object)DBNull.Value))
+                        new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value))
                     .ToListAsync();
 
-                var totalCount = await _dbContext.Todos
-                    .Where(t => t.UserId == userId)
-                    .CountAsync();
+                var totalCount = todos.Count(); 
 
                 var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
