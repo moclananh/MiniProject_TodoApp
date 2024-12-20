@@ -60,9 +60,18 @@ namespace Todo.Application.Services.TodoServices
             {
                 var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
 
+                // Define output parameter for TotalItem
+                var totalItemParam = new SqlParameter
+                {
+                    ParameterName = "@TotalItem",
+                    SqlDbType = System.Data.SqlDbType.Int,
+                    Direction = System.Data.ParameterDirection.Output
+                };
+
+                // Execute the stored procedure
                 var todos = await _dbContext.Todos
                     .FromSqlRaw(
-                        "EXEC dbo.GetTodosByUserIdWithPaging @UserId, @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @StartDate, @EndDate, @CreatedDate",
+                        "EXEC dbo.GetTodosByUserIdWithPaging @UserId, @PageNumber, @PageSize, @SearchTerm, @Priority, @Status, @Star, @IsActive, @StartDate, @EndDate, @CreatedDate, @TotalItem OUTPUT",
                         new SqlParameter("@UserId", userId),
                         new SqlParameter("@PageNumber", request.PageNumber),
                         new SqlParameter("@PageSize", request.PageSize),
@@ -73,10 +82,12 @@ namespace Todo.Application.Services.TodoServices
                         new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
                         new SqlParameter("@StartDate", request.StartDate ?? (object)DBNull.Value),
                         new SqlParameter("@EndDate", request.EndDate ?? (object)DBNull.Value),
-                        new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value))
+                        new SqlParameter("@CreatedDate", request.CreatedDate ?? (object)DBNull.Value),
+                        totalItemParam)
                     .ToListAsync();
 
-                var totalCount = todos.Count(); 
+                // Get the total count from the output parameter
+                int totalCount = (int)(totalItemParam.Value ?? 0);
 
                 var todoListVm = _mapper.Map<List<TodoVm>>(todos);
 
