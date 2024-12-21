@@ -8,11 +8,11 @@ namespace Todo.TodoAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class TodoController : ControllerBase
+    public class TodosController : ControllerBase
     {
         private readonly ITodoService _todoService;
 
-        public TodoController(ITodoService todoService)
+        public TodosController(ITodoService todoService)
         {
             _todoService = todoService;
         }
@@ -26,7 +26,7 @@ namespace Todo.TodoAPI.Controllers
             return Ok(response);
         }
 
-        [HttpGet("GetTodosByUserId/{userId:guid}")]
+        [HttpGet("users/{userId:guid}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTodosByUserId(Guid userId, [FromQuery] FilterRequest request)
@@ -63,7 +63,7 @@ namespace Todo.TodoAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPatch("StarUpdate/{id}")]
+        [HttpPatch("{id}/star")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -69,6 +69,11 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddRouting(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 //custom swagger
 builder.Services.AddSwaggerGen(c =>
 {
