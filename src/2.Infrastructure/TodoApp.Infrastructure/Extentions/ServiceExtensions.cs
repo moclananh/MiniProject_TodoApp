@@ -7,7 +7,8 @@ namespace TodoApp.Infrastructure.Extentions
     {
         public static void AddInfrastructureServices(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(MapperConfig)); 
+            services.AddAutoMapper(typeof(MapperConfig));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }

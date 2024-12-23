@@ -8,6 +8,7 @@ using Todo.Application.Services.UserServices;
 using TodoApp.BuildingBlock.Exceptions.Handler;
 using TodoApp.Domain.Models;
 using TodoApp.Domain.Models.EF;
+using TodoApp.Infrastructure;
 using TodoApp.Infrastructure.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,7 @@ builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSett
 
 //declare DI
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddTransient<ITodoService, TodoService>();
+builder.Services.AddScoped<ITodoService, TodoService>();
 
 //register infrastructure services
 builder.Services.AddInfrastructureServices();
