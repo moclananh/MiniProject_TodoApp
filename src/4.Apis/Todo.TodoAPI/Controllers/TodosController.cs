@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Services.TodoServices;
+using TodoApp.Domain.Models;
 using TodoApp.Infrastructure.Dtos.TodoDtos;
 
 namespace Todo.TodoAPI.Controllers
@@ -22,6 +23,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTodos([FromQuery] FilterRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.GetAllTodos(request);
             return Ok(response);
         }
@@ -31,6 +40,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetTodosByUserId(Guid userId, [FromQuery] FilterRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.GetTodosByUserId(userId, request);
             return Ok(response);
         }
@@ -40,6 +57,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetTodoById(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.GetTodoById(id);
             return Ok(response);
         }
@@ -49,6 +74,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreateTodo([FromBody] CreateTodoRequest todoVm)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.CreateTodo(todoVm);
             return Ok(response);
         }
@@ -59,6 +92,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateTodo(int id, [FromBody] UpdateTodoRequest todoVm)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.UpdateTodo(id, todoVm);
             return Ok(response);
         }
@@ -69,6 +110,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> StarUpdate(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.StarUpdate(id);
             return Ok(response);
         }
@@ -79,6 +128,14 @@ namespace Todo.TodoAPI.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTodo(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Success = false,
+                    Message = "Invalid data provided."
+                });
+            }
             var response = await _todoService.DeleteTodo(id);
             return Ok(response);
         }
