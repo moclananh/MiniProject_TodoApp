@@ -27,6 +27,9 @@ builder.Services.Configure<AppSetting>(builder.Configuration.GetSection("AppSett
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ITodoService, TodoService>();
 
+// Register logging services (ILogger is already available)
+builder.Services.AddLogging();
+
 //register infrastructure services
 builder.Services.AddInfrastructureServices();
 

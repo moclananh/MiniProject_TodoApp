@@ -81,17 +81,31 @@ namespace Todo.Application.Services.TodoServices
 
         public async Task<ApiResponse> UpdateTodo(int id, UpdateTodoRequest todoVm)
         {
-            var todo = await _unitOfWork.TodosRepository.GetTodoByIdAsync(id);
-
-            if (todo is null) throw new TodoNotFoundException(id);
-
-            await _unitOfWork.TodosRepository.UpdateTodoAsync(id, todoVm);
-
-            return new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Todo updated successfully."
-            };
+                await _unitOfWork.BeginTransactionAsync();  // Begin transaction with pessimistic locking
+
+                var todo = await _unitOfWork.TodosRepository.GetTodoByIdAsync(id);
+
+                if (todo is null) throw new TodoNotFoundException(id);
+
+                await _unitOfWork.TodosRepository.UpdateTodoAsync(id, todoVm);
+
+                // Commit the transaction if everything is successful
+                await _unitOfWork.CommitTransactionAsync();
+
+                return new ApiResponse
+                {
+                    Success = true,
+                    Message = "Todo updated successfully."
+                };
+            }
+            catch (Exception ex)
+            {
+                // Rollback if an error occurs
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new Exception("An error occurred while updating the todo.", ex);
+            }
         }
 
         public async Task<ApiResponse> StarUpdate(int id)
@@ -112,17 +126,30 @@ namespace Todo.Application.Services.TodoServices
 
         public async Task<ApiResponse> DeleteTodo(int id)
         {
-            var todo = await _unitOfWork.TodosRepository.GetTodoByIdAsync(id);
-
-            if (todo is null) throw new TodoNotFoundException(id);
-
-            await _unitOfWork.TodosRepository.DeleteTodoAsync(id);
-
-            return new ApiResponse
+            try
             {
-                Success = true,
-                Message = "Todo deleted successfully."
-            };
+                await _unitOfWork.BeginTransactionAsync();
+
+                var todo = await _unitOfWork.TodosRepository.GetTodoByIdAsync(id);
+
+                if (todo is null) throw new TodoNotFoundException(id);
+
+                await _unitOfWork.TodosRepository.DeleteTodoAsync(id);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return new ApiResponse
+                {
+                    Success = true,
+                    Message = "Todo deleted successfully."
+                };
+            }
+
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollbackTransactionAsync();
+                throw new Exception("An error occurred while updating the todo.", ex);
+            }
         }
     }
 }

@@ -109,14 +109,14 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             try
             {
                 var result = (await _dbContext.Todos
-                  .FromSqlInterpolated($"EXEC dbo.GetTodoById @Id = {id}")
-                  .ToListAsync())
-                  .SingleOrDefault();
+                    .FromSqlRaw($"EXEC dbo.GetTodoById @Id = {id}")
+                    .ToListAsync())
+                    .SingleOrDefault();
                 return result;
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException("Error when calling store procedure. Error: ", ex.Message);
             }
         }
 
@@ -164,8 +164,9 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             try
             {
                 await _dbContext.Database.ExecuteSqlRawAsync(
-                    "EXEC dbo.UpdateTodo @Id, @Title, @Description, @Status, @Priority, @StarDate, @EndDate, @Star, @IsActive",
-                    parameters);
+                  "EXEC dbo.UpdateTodo @Id, @Title, @Description, @Status, @Priority, @StarDate, @EndDate, @Star, @IsActive; " +
+                  "SELECT 1;",
+                  parameters);
             }
             catch (Exception ex)
             {

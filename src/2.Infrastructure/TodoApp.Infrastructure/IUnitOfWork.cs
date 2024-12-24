@@ -8,6 +8,9 @@ namespace TodoApp.Infrastructure
     {
         IUserRepository UserRepository { get; }
         ITodosRepository TodosRepository { get; }
+        Task BeginTransactionAsync();
+        Task CommitTransactionAsync();
+        Task RollbackTransactionAsync();
         Task SaveChangesAsync();
     }
 }
