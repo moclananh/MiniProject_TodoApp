@@ -5,17 +5,17 @@ namespace TodoApp.Domain.Models.Entities
 {
     public class Todo
     {
-        public int Id { get; set; } = default!;
-        public string Title { get; set; } = default!;
-        public string Description { get; set; } = default!;
+        public int Id { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         public TodoStatus Status { get; set; } = TodoStatus.Todo;
-        public int Priority { get; set; } = default!;
+        public int Priority { get; set; } 
         public DateTime? StartDate { get; set; } 
         public DateTime? EndDate { get; set; } 
         public DateTime? CreatedDate { get; set; }
-        public bool Star { get; set; } = default!;
-        public bool IsActive { get; set; } = default!;
+        public bool Star { get; set; } 
+        public bool IsActive { get; set; } 
         public Guid UserId { get; set; }
-        public User User { get; set; } = default!;
+        public User User { get; set; } 
     }
 }

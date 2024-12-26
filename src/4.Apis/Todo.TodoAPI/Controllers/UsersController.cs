@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Services.UserServices;
+using TodoApp.BuildingBlock.Utilities;
 using TodoApp.Domain.Models;
 using TodoApp.Infrastructure.Dtos.UserDtos;
 
@@ -23,10 +23,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
 
@@ -41,10 +42,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
 

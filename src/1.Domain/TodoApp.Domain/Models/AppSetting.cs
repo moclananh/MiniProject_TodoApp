@@ -1,6 +1,4 @@
-﻿
-
-namespace TodoApp.Domain.Models
+﻿namespace TodoApp.Domain.Models
 {
     public class AppSetting
     {

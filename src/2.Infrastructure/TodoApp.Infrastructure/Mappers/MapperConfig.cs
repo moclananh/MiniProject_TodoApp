@@ -14,10 +14,7 @@ namespace TodoApp.Infrastructure.Mappers
 
 
             // Entity to DTO
-            CreateMap<Todo, TodoVm>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString())) 
-                .ReverseMap()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<TodoStatus>(src.Status)));
+            CreateMap<Todo, TodoVm>().ReverseMap();
 
             CreateMap<Todo, CreateTodoRequest>().ReverseMap();
             // UpdateTodoRequest Mapping

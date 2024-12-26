@@ -1,7 +1,7 @@
-﻿
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TodoApp.BuildingBlock.Exceptions;
+using TodoApp.BuildingBlock.Utilities;
 using TodoApp.Domain.Models.EF;
 using TodoApp.Domain.Models.Entities;
 using TodoApp.Infrastructure.Dtos.TodoDtos;
@@ -19,15 +19,12 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
 
         public async Task<TodoResult> GetAllTodosAsync(FilterRequest request)
         {
-            var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
-
             var totalItemParam = new SqlParameter
             {
                 ParameterName = "@TotalItem", // Output parameter for total item count
                 SqlDbType = System.Data.SqlDbType.Int,
                 Direction = System.Data.ParameterDirection.Output
             };
-
             try
             {
                 // Execute the stored procedure and get the todos
@@ -38,7 +35,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                         new SqlParameter("@PageSize", request.PageSize),
                         new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
                         new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
-                        new SqlParameter("@Status", statusParameter),
+                        new SqlParameter("@Status", request.Status ?? (object)DBNull.Value),
                         new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
                         new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
                         new SqlParameter("@StartDate", request.StartDate ?? (object)DBNull.Value),
@@ -47,23 +44,24 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                         totalItemParam)
                     .ToListAsync();
 
+                // Check if totalItemParam.Value is null
+                int totalCount = totalItemParam.Value != DBNull.Value ? (int)totalItemParam.Value : 0;
+
                 // Return both the todos and the total count encapsulated in TodoResult
                 return new TodoResult
                 {
                     Todos = todos,
-                    TotalCount = (int)totalItemParam.Value
+                    TotalCount = totalCount
                 };
             }
-            catch (Exception ex)
+             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
         }
 
         public async Task<TodoResult> GetTodosByUserIdAsync(Guid userId, FilterRequest request)
         {
-            var statusParameter = request.Status.HasValue ? request.Status.Value.ToString() : (object)DBNull.Value;
-
             var totalItemParam = new SqlParameter
             {
                 ParameterName = "@TotalItem", // Output parameter for total item count
@@ -81,7 +79,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                         new SqlParameter("@PageSize", request.PageSize),
                         new SqlParameter("@SearchTerm", request.Title ?? (object)DBNull.Value),
                         new SqlParameter("@Priority", request.Priority ?? (object)DBNull.Value),
-                        new SqlParameter("@Status", statusParameter),
+                        new SqlParameter("@Status", request.Status ?? (object)DBNull.Value),
                         new SqlParameter("@Star", request.Star ?? (object)DBNull.Value),
                         new SqlParameter("@IsActive", request.IsActive ?? (object)DBNull.Value),
                         new SqlParameter("@StartDate", request.StartDate ?? (object)DBNull.Value),
@@ -90,16 +88,19 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                         totalItemParam)
                     .ToListAsync();
 
+                // Check if totalItemParam.Value is null
+                int totalCount = totalItemParam.Value != DBNull.Value ? (int)totalItemParam.Value : 0;
+
                 // Return both the todos and the total count encapsulated in TodoResult
                 return new TodoResult
                 {
                     Todos = todos,
-                    TotalCount = (int)totalItemParam.Value
+                    TotalCount = totalCount
                 };
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
 
         }
@@ -126,7 +127,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                {
                     new SqlParameter("@Title", todoVm.Title),
                     new SqlParameter("@Description", (object?)todoVm.Description ?? DBNull.Value),
-                    new SqlParameter("@Status", todoVm.Status.ToString()),
+                    new SqlParameter("@Status", todoVm.Status),
                     new SqlParameter("@Priority", todoVm.Priority),
                     new SqlParameter("@StarDate", (object?)todoVm.StartDate ?? DBNull.Value),
                     new SqlParameter("@EndDate", (object?)todoVm.EndDate ?? DBNull.Value),
@@ -143,7 +144,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
         }
 
@@ -154,7 +155,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
                     new SqlParameter("@Id", id),
                     new SqlParameter("@Title", todoVm.Title),
                     new SqlParameter("@Description", (object?)todoVm.Description ?? DBNull.Value),
-                    new SqlParameter("@Status", todoVm.Status.ToString()),
+                    new SqlParameter("@Status", todoVm.Status),
                     new SqlParameter("@Priority", todoVm.Priority),
                     new SqlParameter("@StarDate", (object?)todoVm.StartDate ?? DBNull.Value),
                     new SqlParameter("@EndDate", (object?)todoVm.EndDate ?? DBNull.Value),
@@ -170,7 +171,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
         }
 
@@ -183,7 +184,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
 
         }
@@ -213,7 +214,7 @@ namespace TodoApp.Infrastructure.Repositories.TodosRepositories
             }
             catch (Exception ex)
             {
-                throw new BadRequestException("Error when call store procedure. Error: ", ex.Message);
+                throw new BadRequestException(SystemConstants.InternalMessageResponses.DatabaseBadResponse, ex.Message);
             }
         }
     }

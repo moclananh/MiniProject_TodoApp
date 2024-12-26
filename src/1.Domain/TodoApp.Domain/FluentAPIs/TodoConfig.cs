@@ -24,9 +24,7 @@ namespace TodoApp.Domain.FluentAPIs
                    .HasMaxLength(1000);
 
             builder.Property(t => t.Status)
-                       .IsRequired()
-                       .HasConversion<string>()
-                       .HasMaxLength(20);
+                       .IsRequired();
 
             builder.Property(t => t.Priority)
                    .IsRequired();

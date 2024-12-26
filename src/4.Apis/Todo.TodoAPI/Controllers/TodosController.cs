@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Application.Services.TodoServices;
+using TodoApp.BuildingBlock.Utilities;
 using TodoApp.Domain.Models;
 using TodoApp.Infrastructure.Dtos.TodoDtos;
 
@@ -25,10 +26,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.GetAllTodos(request);
@@ -42,10 +44,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.GetTodosByUserId(userId, request);
@@ -59,10 +62,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.GetTodoById(id);
@@ -76,10 +80,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.CreateTodo(todoVm);
@@ -94,10 +99,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.UpdateTodo(id, todoVm);
@@ -112,10 +118,11 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.StarUpdate(id);
@@ -130,15 +137,15 @@ namespace Todo.TodoAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse
+                return BadRequest(new ApiResponse<bool>
                 {
-                    Success = false,
-                    Message = "Invalid data provided."
+                    IsSuccess = false,
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = SystemConstants.ModelStateResponses.ModelStateInvalid
                 });
             }
             var response = await _todoService.DeleteTodo(id);
             return Ok(response);
         }
     }
-
 }

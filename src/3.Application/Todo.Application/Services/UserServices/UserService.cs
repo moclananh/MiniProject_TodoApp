@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Todo.Application.Exceptions.UserExceptions;
+using TodoApp.BuildingBlock.Utilities;
 using TodoApp.Domain.Models.Entities;
 using TodoApp.Infrastructure;
 using TodoApp.Infrastructure.Dtos.UserDtos;
@@ -40,14 +42,15 @@ namespace Todo.Application.Services.UserServices
             // If the password verification fails, throw exception
             if (verificationResult == PasswordVerificationResult.Failed)
             {
-                throw new UserBadRequestException("Incorrect password.");
+                throw new UserBadRequestException(SystemConstants.AuthenticateResponses.IncorrectPassword);
             }
 
             // If authentication is successful, return login response
             return new LoginResponse
             {
-                Success = true,
-                Message = "Login successful!",
+                IsSuccess = true,
+                Message = SystemConstants.AuthenticateResponses.UserAuthenticated,
+                StatusCode = StatusCodes.Status200OK,
                 Id = authResponse.User.Id,
                 UserName = authResponse.User.UserName,
                 Email = authResponse.User.Email,
@@ -55,7 +58,7 @@ namespace Todo.Application.Services.UserServices
             };
         }
 
-        public async Task<ApiResponse> Register(RegisterVm request)
+        public async Task<ApiResponse<bool>> Register(RegisterVm request)
         {
             // Call the repository via Unit of Work
             var result = await _unitOfWork.UserRepository.RegisterUser(request);
@@ -63,14 +66,15 @@ namespace Todo.Application.Services.UserServices
             // Handle result
             return result switch
             {
-                -1 => throw new UserBadRequestException("Email is already registered. Please use a different email."),
-                -2 => throw new UserBadRequestException("Username is already registered. Please use a different username."),
-                1 => new ApiResponse
+                -1 => throw new UserBadRequestException(SystemConstants.AuthenticateResponses.EmailChecked),
+                -2 => throw new UserBadRequestException(SystemConstants.AuthenticateResponses.UsernameChecked),
+                1 => new ApiResponse<bool>
                 {
-                    Success = true,
-                    Message = "Registration Successful!"
+                    IsSuccess = true,
+                    StatusCode = StatusCodes.Status201Created,
+                    Message = SystemConstants.AuthenticateResponses.UserRegistered
                 },
-                _ => throw new InternalServerException("Unexpected error during registration.")
+                _ => throw new InternalServerException(SystemConstants.InternalMessageResponses.InternalMessageError)
             };
         }
 
